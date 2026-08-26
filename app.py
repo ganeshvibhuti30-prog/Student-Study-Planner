@@ -16,6 +16,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 def get_db_connection():
     connection = sqlite3.connect(DATABASE)
     connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA foreign_keys = ON")
     return connection
 
 
