@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -438,6 +439,7 @@ def assignments():
         status = request.form["status"].strip()
 
         if not subject_id or not description or not deadline or not priority or not status:
+
             subjects = connection.execute("""
                 SELECT *
                 FROM subjects
@@ -506,9 +508,7 @@ def assignments():
         subjects=subjects,
         assignments=assignments_list
     )
-
-
-@app.route("/assignments/edit/<int:assignment_id>", methods=["GET", "POST"])
+@app.route("/assignments/edit/<int:assignment_id>", methods=["GET", "POST"]) 
 def edit_assignment(assignment_id):
 
     if "user_id" not in session:
