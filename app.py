@@ -56,7 +56,7 @@ def home():
     if "user_id" in session:
         return redirect(url_for("dashboard"))
 
-    return "Student Study Planner is running!"
+    return redirect(url_for("login"))
 
 
 @app.route("/register", methods=["GET", "POST"])
