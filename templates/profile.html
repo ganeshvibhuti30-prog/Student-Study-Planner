@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile</title>
+</head>
+
+<body>
+
+    <h1>My Profile</h1>
+
+    <h2>Student Information</h2>
+
+    <p>
+        <strong>Full Name:</strong>
+        {{ user["full_name"] }}
+    </p>
+
+    <p>
+        <strong>Student ID:</strong>
+        {{ user["student_id"] }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ user["email"] }}
+    </p>
+
+    <p>
+        <strong>Course:</strong>
+        {{ user["course"] }}
+    </p>
+
+    <p>
+        <strong>Semester:</strong>
+        {{ user["semester"] }}
+    </p>
+
+    <br>
+
+    <a href="/dashboard">
+        <button>Back to Dashboard</button>
+    </a>
+
+    <a href="/logout">
+        <button>Logout</button>
+    </a>
+
+</body>
+
+</html>

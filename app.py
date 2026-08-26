@@ -1,10 +1,13 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
 DATABASE = "database.db"
+
+# Secret key is required for Flask sessions
+app.secret_key = "student-study-planner-secret-key"
 
 
 def get_db_connection():
@@ -35,6 +38,10 @@ def create_database():
 
 @app.route("/")
 def home():
+
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
+
     return "Student Study Planner is running!"
 
 
@@ -131,9 +138,56 @@ def login():
         if not check_password_hash(user["password_hash"], password):
             return "Invalid email or password."
 
-        return f"Login successful! Welcome, {user['full_name']}."
+        # Store logged-in user's ID in session
+        session["user_id"] = user["id"]
+
+        return redirect(url_for("dashboard"))
 
     return render_template("login.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+
+    # User must be logged in
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    user = connection.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (session["user_id"],)
+    ).fetchone()
+
+    connection.close()
+
+    return render_template("dashboard.html", user=user)
+
+@app.route("/profile")
+def profile():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    user = connection.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (session["user_id"],)
+    ).fetchone()
+
+    connection.close()
+
+    return render_template("profile.html", user=user)
+
+@app.route("/logout")
+def logout():
+
+    # Remove login information from session
+    session.clear()
+
+    return redirect(url_for("login"))
 
 
 if __name__ == "__main__":
