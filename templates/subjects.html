@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Subject Setup</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/subjects.css') }}">
+
+</head>
+
+<body>
+
+    <div class="subjects-container">
+
+        <div class="subjects-card">
+
+            <div class="page-header">
+
+                <h1>Subject Setup</h1>
+
+                <p>
+                    Add and manage your academic subjects
+                </p>
+
+            </div>
+
+            {% if error %}
+                <div class="error-message">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form action="{{ url_for('subjects') }}"
+                  method="POST">
+
+                <label for="subject_code">
+                    Subject Code
+                </label>
+
+                <input
+                    type="text"
+                    id="subject_code"
+                    name="subject_code"
+                    placeholder="Example: CS101"
+                    required
+                >
+
+                <label for="subject_name">
+                    Subject Name
+                </label>
+
+                <input
+                    type="text"
+                    id="subject_name"
+                    name="subject_name"
+                    placeholder="Example: Computer Science"
+                    required
+                >
+
+                <label for="credits">
+                    Credits
+                </label>
+
+                <input
+                    type="number"
+                    id="credits"
+                    name="credits"
+                    min="1"
+                    max="4"
+                    step="1"
+                    placeholder="Enter credits (1-4)"
+                    required
+                >
+
+                <label for="semester">
+                    Semester
+                </label>
+
+                <select
+                    id="semester"
+                    name="semester"
+                    required
+                >
+
+                    <option value="">
+                        Select Semester
+                    </option>
+
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                    <option value="3">Semester 3</option>
+                    <option value="4">Semester 4</option>
+                    <option value="5">Semester 5</option>
+                    <option value="6">Semester 6</option>
+                    <option value="7">Semester 7</option>
+                    <option value="8">Semester 8</option>
+
+                </select>
+
+                <button type="submit">
+                    Add Subject
+                </button>
+
+            </form>
+
+            <hr>
+
+            <h2>Your Subjects</h2>
+
+            {% if subjects %}
+
+                <div class="subject-list">
+
+                    {% for subject in subjects %}
+
+                        <div class="subject-item">
+
+    <div class="subject-details">
+
+        <strong>
+            {{ subject["subject_code"] }}
+        </strong>
+
+        <span>
+            {{ subject["subject_name"] }}
+        </span>
+
+        <small>
+            {{ subject["credits"] }} Credits
+            ·
+            Semester {{ subject["semester"] }}
+        </small>
+
+    </div>
+
+    <form
+        action="{{ url_for('delete_subject', subject_id=subject['id']) }}"
+        method="POST"
+        class="delete-form"
+        onsubmit="return confirm('Are you sure you want to delete this subject?');"
+    >
+
+        <button
+            type="submit"
+            class="delete-button"
+            title="Delete subject"
+            aria-label="Delete subject"
+        >
+            🗑️
+        </button>
+
+    </form>
+
+</div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="empty-message">
+                    No subjects added yet.
+                </p>
+
+            {% endif %}
+
+            <div class="navigation">
+
+                <a href="{{ url_for('dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('profile') }}">
+                    My Profile
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/subjects.js') }}"></script>
+
+</body>
+
+</html>

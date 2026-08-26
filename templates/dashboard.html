@@ -25,15 +25,6 @@
                     Dashboard
                 </a>
 
-                <a href="{{ url_for('profile') }}">
-                    Profile
-                </a>
-
-                <a href="{{ url_for('logout') }}"
-                   onclick="return confirm('Are you sure you want to logout?');">
-                    Logout
-                </a>
-
             </nav>
 
             <div class="dashboard-header">
@@ -79,6 +70,12 @@
             </div>
 
             <div class="navigation">
+                
+                <a href="{{ url_for('subjects') }}">
+                    <button type="button">
+                        Subject Setup
+                    </button>
+                </a>
 
                 <a href="{{ url_for('profile') }}">
                     <button type="button">

@@ -46,6 +46,20 @@ def create_database():
         ON users(student_id)
     """)
 
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS subjects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_code TEXT NOT NULL,
+            subject_name TEXT NOT NULL,
+            credits INTEGER NOT NULL,
+            semester TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE(user_id, subject_code)
+        )
+    """)
+
     connection.commit()
     connection.close()
 
@@ -236,6 +250,148 @@ def profile():
         return redirect(url_for("login"))
 
     return render_template("profile.html", user=user)
+
+@app.route("/subjects", methods=["GET", "POST"])
+def subjects():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    if request.method == "POST":
+
+        subject_code = request.form["subject_code"].strip()
+        subject_name = request.form["subject_name"].strip()
+        credits = request.form["credits"].strip()
+        semester = request.form["semester"].strip()
+
+        if not subject_code or not subject_name or not credits or not semester:
+
+            subjects = connection.execute("""
+                SELECT *
+                FROM subjects
+                WHERE user_id = ?
+                ORDER BY semester, subject_code
+            """, (session["user_id"],)).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "subjects.html",
+                error="All subject fields are required.",
+                subjects=subjects
+            )
+
+        try:
+            credits = int(credits)
+
+            if credits < 1 or credits > 4:
+
+                subjects = connection.execute("""
+                    SELECT *
+                    FROM subjects
+                    WHERE user_id = ?
+                    ORDER BY semester, subject_code
+                """, (session["user_id"],)).fetchall()
+
+                connection.close()
+
+                return render_template(
+                    "subjects.html",
+                    error="Credits must be between 1 and 4.",
+                    subjects=subjects
+                )
+
+            connection.execute("""
+                INSERT INTO subjects
+                (
+                    user_id,
+                    subject_code,
+                    subject_name,
+                    credits,
+                    semester
+                )
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                session["user_id"],
+                subject_code,
+                subject_name,
+                credits,
+                semester
+            ))
+
+            connection.commit()
+
+        except ValueError:
+
+            subjects = connection.execute("""
+                SELECT *
+                FROM subjects
+                WHERE user_id = ?
+                ORDER BY semester, subject_code
+            """, (session["user_id"],)).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "subjects.html",
+                error="Credits must be a valid number.",
+                subjects=subjects
+            )
+
+        except sqlite3.IntegrityError:
+
+            subjects = connection.execute("""
+                SELECT *
+                FROM subjects
+                WHERE user_id = ?
+                ORDER BY semester, subject_code
+            """, (session["user_id"],)).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "subjects.html",
+                error="This subject code already exists.",
+                subjects=subjects
+            )
+
+    subjects = connection.execute("""
+        SELECT *
+        FROM subjects
+        WHERE user_id = ?
+        ORDER BY semester, subject_code
+    """, (session["user_id"],)).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "subjects.html",
+        subjects=subjects
+    )
+
+
+@app.route("/subjects/delete/<int:subject_id>", methods=["POST"])
+def delete_subject(subject_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute("""
+        DELETE FROM subjects
+        WHERE id = ? AND user_id = ?
+    """, (
+        subject_id,
+        session["user_id"]
+    ))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("subjects"))
 
 @app.route("/logout")
 def logout():
