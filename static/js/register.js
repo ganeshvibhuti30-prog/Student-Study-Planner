@@ -27,3 +27,38 @@ registrationForm.addEventListener("submit", function (event) {
         return;
     }
 });
+
+
+// Password visibility toggle
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+
+togglePassword.addEventListener("click", function () {
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePassword.textContent = "Hide Password";
+    } else {
+        passwordInput.type = "password";
+        togglePassword.textContent = "Show Password";
+    }
+});
+
+
+// Confirm password visibility toggle
+const confirmPasswordInput =
+    document.getElementById("confirm_password");
+
+const toggleConfirmPassword =
+    document.getElementById("toggleConfirmPassword");
+
+toggleConfirmPassword.addEventListener("click", function () {
+
+    if (confirmPasswordInput.type === "password") {
+        confirmPasswordInput.type = "text";
+        toggleConfirmPassword.textContent = "Hide Password";
+    } else {
+        confirmPasswordInput.type = "password";
+        toggleConfirmPassword.textContent = "Show Password";
+    }
+});
