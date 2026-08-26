@@ -19,6 +19,23 @@
 
         <div class="dashboard-card">
 
+            <nav class="top-navigation">
+
+                <a href="{{ url_for('dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('profile') }}">
+                    Profile
+                </a>
+
+                <a href="{{ url_for('logout') }}"
+                   onclick="return confirm('Are you sure you want to logout?');">
+                    Logout
+                </a>
+
+            </nav>
+
             <div class="dashboard-header">
 
                 <h1>
@@ -63,17 +80,17 @@
 
             <div class="navigation">
 
-                <a href="/profile">
+                <a href="{{ url_for('profile') }}">
                     <button type="button">
                         My Profile
                     </button>
                 </a>
 
-                <a href="/logout"
-                    onclick="return confirm('Are you sure you want to logout?');">
-                        <button type="button">
-                            Logout
-                        </button>
+                <a href="{{ url_for('logout') }}"
+                   onclick="return confirm('Are you sure you want to logout?');">
+                    <button type="button">
+                        Logout
+                    </button>
                 </a>
 
             </div>
