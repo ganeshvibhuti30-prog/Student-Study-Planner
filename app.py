@@ -174,7 +174,8 @@ def login():
 
         # Store logged-in user's ID in session
         session["user_id"] = user["id"]
-
+        session["login_message"] = "Login successful. Welcome back!"
+        
         return redirect(url_for("dashboard"))
 
     return render_template("login.html")
