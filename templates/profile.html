@@ -3,51 +3,80 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>My Profile</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/profile.css') }}">
 </head>
 
 <body>
 
-    <h1>My Profile</h1>
+    <div class="profile-container">
 
-    <h2>Student Information</h2>
+        <div class="profile-card">
 
-    <p>
-        <strong>Full Name:</strong>
-        {{ user["full_name"] }}
-    </p>
+            <div class="profile-header">
 
-    <p>
-        <strong>Student ID:</strong>
-        {{ user["student_id"] }}
-    </p>
+                <h1>My Profile</h1>
 
-    <p>
-        <strong>Email:</strong>
-        {{ user["email"] }}
-    </p>
+                <p>
+                    Student account information
+                </p>
 
-    <p>
-        <strong>Course:</strong>
-        {{ user["course"] }}
-    </p>
+            </div>
 
-    <p>
-        <strong>Semester:</strong>
-        {{ user["semester"] }}
-    </p>
+            <div class="profile-info">
 
-    <br>
+                <div class="profile-item">
+                    <strong>Full Name</strong>
+                    {{ user["full_name"] }}
+                </div>
 
-    <a href="/dashboard">
-        <button>Back to Dashboard</button>
-    </a>
+                <div class="profile-item">
+                    <strong>Student ID</strong>
+                    {{ user["student_id"] }}
+                </div>
 
-    <a href="/logout">
-        <button>Logout</button>
-    </a>
+                <div class="profile-item">
+                    <strong>Email</strong>
+                    {{ user["email"] }}
+                </div>
+
+                <div class="profile-item">
+                    <strong>Course</strong>
+                    {{ user["course"] }}
+                </div>
+
+                <div class="profile-item">
+                    <strong>Semester</strong>
+                    {{ user["semester"] }}
+                </div>
+
+            </div>
+
+            <div class="profile-actions">
+
+                <a href="/dashboard">
+                    <button type="button">
+                        Dashboard
+                    </button>
+                </a>
+
+                <a href="/logout">
+                    <button type="button">
+                        Logout
+                    </button>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 
