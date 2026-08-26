@@ -463,6 +463,20 @@ def assignments():
                 assignments=assignments_list,
                 error="All assignment fields are required."
             )
+        subject = connection.execute("""
+            SELECT id
+            FROM subjects
+            WHERE id = ? AND user_id = ?
+        """, (
+            subject_id,
+            session["user_id"]
+        )).fetchone()
+
+        if subject is None:
+            connection.close()
+            return "Invalid subject selected."
+
+        
 
         connection.execute("""
             INSERT INTO assignments
@@ -786,7 +800,7 @@ def delete_exam(exam_id):
     connection.execute("""
         DELETE FROM exams
         WHERE id = ? AND user_id = ?
-    """, (
+                """, (
         exam_id,
         session["user_id"]
     ))
