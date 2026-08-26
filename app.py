@@ -59,6 +59,25 @@ def register():
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
 
+                # Server-side validation
+        if not full_name:
+            return "Full name is required."
+
+        if not student_id:
+            return "Student ID is required."
+
+        if not email:
+            return "Email is required."
+
+        if not course:
+            return "Course is required."
+
+        if not semester:
+            return "Semester is required."
+
+        if not password:
+            return "Password is required."
+        
         if password != confirm_password:
             return "Passwords do not match."
 
