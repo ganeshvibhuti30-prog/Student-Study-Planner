@@ -175,7 +175,7 @@ def login():
         # Store logged-in user's ID in session
         session["user_id"] = user["id"]
         session["login_message"] = "Login successful. Welcome back!"
-        
+
         return redirect(url_for("dashboard"))
 
     return render_template("login.html")
@@ -184,7 +184,6 @@ def login():
 @app.route("/dashboard")
 def dashboard():
 
-    # User must be logged in
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -196,6 +195,10 @@ def dashboard():
     ).fetchone()
 
     connection.close()
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
 
     return render_template("dashboard.html", user=user)
 
@@ -213,6 +216,10 @@ def profile():
     ).fetchone()
 
     connection.close()
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
 
     return render_template("profile.html", user=user)
 
