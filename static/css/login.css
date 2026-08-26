@@ -105,3 +105,14 @@ button:hover {
     text-align: center;
     font-size: 14px;
 }
+
+.logout-message {
+    color: #2e7d32;
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 14px;
+}

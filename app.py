@@ -232,7 +232,10 @@ def logout():
     # Remove login information from session
     session.clear()
 
-    return redirect(url_for("login"))
+    return render_template(
+        "login.html",
+        logout_message="You have been logged out successfully."
+    )
 
 
 if __name__ == "__main__":

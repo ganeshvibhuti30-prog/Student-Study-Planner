@@ -26,6 +26,12 @@
             {% if error %}
                 <p class="login-error">{{ error }}</p>
             {% endif %}
+            
+            {% if logout_message %}
+                <p class="logout-message">
+                    {{ logout_message }}
+                </p>
+            {% endif %}
 
             <form action="/login" method="POST">
 
