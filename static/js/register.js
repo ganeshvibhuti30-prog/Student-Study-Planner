@@ -8,6 +8,7 @@ registrationForm.addEventListener("submit", function (event) {
     const passwordError = document.getElementById("passwordError");
 
     passwordError.textContent = "";
+    passwordError.style.display = "none";
 
     if (password.length < 8) {
         event.preventDefault();
@@ -15,6 +16,7 @@ registrationForm.addEventListener("submit", function (event) {
         passwordError.textContent =
             "Password must contain at least 8 characters.";
 
+        passwordError.style.display = "block";
         return;
     }
 
@@ -24,6 +26,7 @@ registrationForm.addEventListener("submit", function (event) {
         passwordError.textContent =
             "Passwords do not match.";
 
+        passwordError.style.display = "block";
         return;
     }
 });
