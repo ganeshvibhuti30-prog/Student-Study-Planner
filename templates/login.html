@@ -23,6 +23,10 @@
                 Welcome back to your academic planner
             </p>
 
+            {% if error %}
+                <p class="login-error">{{ error }}</p>
+            {% endif %}
+
             <form action="/login" method="POST">
 
                 <label for="email">Email:</label>

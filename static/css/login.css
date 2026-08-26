@@ -94,3 +94,14 @@ button:hover {
     font-weight: bold;
     text-decoration: none;
 }
+
+.login-error {
+    color: #c62828;
+    background: #ffebee;
+    border: 1px solid #ef9a9a;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 14px;
+}

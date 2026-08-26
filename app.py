@@ -161,10 +161,16 @@ def login():
         connection.close()
 
         if user is None:
-            return "Invalid email or password."
+            return render_template(
+                "login.html",
+                error="Invalid email or password."
+            )
 
         if not check_password_hash(user["password_hash"], password):
-            return "Invalid email or password."
+            return render_template(
+                "login.html",
+                error="Invalid email or password."
+            )
 
         # Store logged-in user's ID in session
         session["user_id"] = user["id"]
