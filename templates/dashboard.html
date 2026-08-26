@@ -3,65 +3,83 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-    .success-message {
-        color: #2e7d32;
-        background: #e8f5e9;
-        border: 1px solid #a5d6a7;
-        border-radius: 6px;
-        padding: 10px;
-        margin: 15px 0;
-    }
-</style>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Student Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 
 <body>
 
-    <h1>Welcome, {{ user["full_name"] }}!</h1>
+    <div class="dashboard-container">
 
-    {% if session.get("login_message") %}
-    <p class="success-message">
-        {{ session.pop("login_message") }}
-    </p>
-    {% endif %}
+        <div class="dashboard-card">
 
-    <h2>Student Dashboard</h2>
+            <div class="dashboard-header">
 
-    <p>
-        <strong>Student ID:</strong>
-        {{ user["student_id"] }}
-    </p>
+                <h1>
+                    Welcome, {{ user["full_name"] }}!
+                </h1>
 
-    <p>
-        <strong>Email:</strong>
-        {{ user["email"] }}
-    </p>
+                {% if session.get("login_message") %}
+                    <p class="success-message">
+                        {{ session.pop("login_message") }}
+                    </p>
+                {% endif %}
 
-    <p>
-        <strong>Course:</strong>
-        {{ user["course"] }}
-    </p>
+                <p>
+                    Student Study Planner Dashboard
+                </p>
 
-    <p>
-        <strong>Semester:</strong>
-        {{ user["semester"] }}
-    </p>
+            </div>
 
-    <hr>
+            <div class="student-info">
 
-    <h3>Account Navigation</h3>
+                <div class="info-item">
+                    <strong>Student ID</strong>
+                    {{ user["student_id"] }}
+                </div>
 
-    <p>
-        <a href="/profile">My Profile</a>
-    </p>
+                <div class="info-item">
+                    <strong>Email</strong>
+                    {{ user["email"] }}
+                </div>
 
-    <p>
-        <a href="/logout">Logout</a>
-    </p>
+                <div class="info-item">
+                    <strong>Course</strong>
+                    {{ user["course"] }}
+                </div>
+
+                <div class="info-item">
+                    <strong>Semester</strong>
+                    {{ user["semester"] }}
+                </div>
+
+            </div>
+
+            <div class="navigation">
+
+                <a href="/profile">
+                    <button type="button">
+                        My Profile
+                    </button>
+                </a>
+
+                <a href="/logout">
+                    <button type="button">
+                        Logout
+                    </button>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 
