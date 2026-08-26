@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import sqlite3
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -52,17 +52,14 @@ def register():
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
 
-        # Check password match
         if password != confirm_password:
             return "Passwords do not match."
 
-        # Check password length
         if len(password) < 8:
             return "Password must contain at least 8 characters."
 
         connection = get_db_connection()
 
-        # Check if email already exists
         existing_email = connection.execute(
             "SELECT id FROM users WHERE email = ?",
             (email,)
@@ -72,7 +69,6 @@ def register():
             connection.close()
             return "Email is already registered."
 
-        # Check if student ID already exists
         existing_student = connection.execute(
             "SELECT id FROM users WHERE student_id = ?",
             (student_id,)
@@ -82,10 +78,8 @@ def register():
             connection.close()
             return "Student ID is already registered."
 
-        # Hash the password
         password_hash = generate_password_hash(password)
 
-        # Save student
         connection.execute("""
             INSERT INTO users
             (
@@ -111,8 +105,35 @@ def register():
 
         return "Registration successful!"
 
-
     return render_template("register.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        email = request.form["email"].strip()
+        password = request.form["password"]
+
+        connection = get_db_connection()
+
+        user = connection.execute(
+            "SELECT * FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
+
+        connection.close()
+
+        if user is None:
+            return "Invalid email or password."
+
+        if not check_password_hash(user["password_hash"], password):
+            return "Invalid email or password."
+
+        return f"Login successful! Welcome, {user['full_name']}."
+
+    return render_template("login.html")
 
 
 if __name__ == "__main__":
