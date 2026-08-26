@@ -36,6 +36,16 @@ def create_database():
         )
     """)
 
+    connection.execute("""
+        CREATE INDEX IF NOT EXISTS idx_users_email
+        ON users(email)
+    """)
+
+    connection.execute("""
+        CREATE INDEX IF NOT EXISTS idx_users_student_id
+        ON users(student_id)
+    """)
+
     connection.commit()
     connection.close()
 
