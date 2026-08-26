@@ -7,7 +7,10 @@ app = Flask(__name__)
 DATABASE = "database.db"
 
 # Secret key is required for Flask sessions
-app.secret_key = "student-study-planner-secret-key"
+app.config["SECRET_KEY"] = "student-study-planner-secret-key"
+
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 
 def get_db_connection():
