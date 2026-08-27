@@ -1,59 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-{% if sessions %}
-    {% for study in sessions %}
-
-        <div class="study-session">
-
-            <h3>{{ study["subject"] }}</h3>
-
-            <p><strong>Topic:</strong> {{ study["topic"] }}</p>
-
-            <p><strong>Date:</strong> {{ study["date"] }}</p>
-
-            <p><strong>Time:</strong> {{ study["time"] }}</p>
-
-            <p><strong>Duration:</strong> {{ study["duration"] }} hours</p>
-
-            <p><strong>Status:</strong> {{ study["status"] }}</p>
- 
-            <a href="/edit-study/{{ study['id'] }}">
-               <button type="button">Edit</button>
-</a>
-        </div>
-
-        <hr>
-
-    {% endfor %}
-
-{% else %}
-
-    <p>No study sessions added yet.</p>
-
-{% endif %}
-<link rel="stylesheet" href="css/study-planner.css">
-<script src="planner.js"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Study Planner</title>
+    <title>Daily Study Planner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/study-planner.css') }}">
 </head>
 
 <body>
 
-    <h1>Student Study Planner</h1>
+    <h1>Daily Study Planner</h1>
 
-    <p>Plan your study sessions and stay organized.</p>
+    <p>Plan and track your study sessions for each day.</p>
 
     <hr>
 
-    <h2>My Study Sessions</h2>
+    <label for="planner-date">Select Date:</label>
+    <input type="date" id="planner-date">
 
-    <p>My study sessions</p>
+    <h2>Study Sessions</h2>
 
-    <button>Add Study Session</button>
+    {% if sessions %}
+
+        {% for study in sessions %}
+
+            <div class="study-session" data-study-date="{{ study['date'] }}">
+
+                <h3>{{ study["subject"] }}</h3>
+
+                <p><strong>Topic:</strong> {{ study["topic"] }}</p>
+
+                <p><strong>Date:</strong> {{ study["date"] }}</p>
+
+                <p><strong>Time:</strong> {{ study["time"] }}</p>
+
+                <p><strong>Duration:</strong> {{ study["duration"] }} hours</p>
+
+                <p><strong>Status:</strong> {{ study["status"] }}</p>
+
+                <a href="/edit-study/{{ study['id'] }}">
+                    <button type="button">Edit</button>
+                </a>
+
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No study sessions added yet.</p>
+
+    {% endif %}
+
+    <p id="no-daily-sessions" style="display: none;">
+        No study sessions planned for this date.
+    </p>
+
+    <a href="/add-study">
+        <button type="button">Add Study Session</button>
+    </a>
+
+    <script src="{{ url_for('static', filename='planner.js') }}"></script>
 
 </body>
+
 </html>
