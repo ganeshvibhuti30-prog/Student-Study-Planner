@@ -494,6 +494,74 @@ def goals():
         "goals.html",
         goals=goals
     )
+
+@app.route("/edit-goal/<int:goal_id>", methods=["GET", "POST"])
+def edit_goal(goal_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    goal = connection.execute(
+        """
+        SELECT * FROM study_goals
+        WHERE id = ? AND user_id = ?
+        """,
+        (goal_id, session["user_id"])
+    ).fetchone()
+
+    if goal is None:
+        connection.close()
+        return "Study goal not found."
+
+    if request.method == "POST":
+
+        title = request.form["title"].strip()
+        description = request.form["description"].strip()
+        target_hours = request.form["target_hours"]
+
+        if not title or not description or not target_hours:
+            connection.close()
+            return "All goal fields are required."
+
+        try:
+            target_hours = int(target_hours)
+
+            if target_hours <= 0:
+                connection.close()
+                return "Target study hours must be greater than 0."
+
+            connection.execute(
+                """
+                UPDATE study_goals
+                SET title = ?, description = ?, target_hours = ?
+                WHERE id = ? AND user_id = ?
+                """,
+                (
+                    title,
+                    description,
+                    target_hours,
+                    goal_id,
+                    session["user_id"]
+                )
+            )
+
+            connection.commit()
+            connection.close()
+
+            return redirect(url_for("goals"))
+
+        except ValueError:
+            connection.close()
+            return "Target study hours must be a valid number."
+
+    connection.close()
+
+    return render_template(
+        "edit-goal.html",
+        goal=goal
+    )
 @app.route("/profile")
 def profile():
 

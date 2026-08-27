@@ -27,6 +27,10 @@
                 <h3>{{ goal["title"] }}</h3>
 
                 <p><strong>Description:</strong> {{ goal["description"] }}</p>
+               
+                <a href="/edit-goal/{{ goal['id'] }}">
+                    <button type="button">Edit Goal</button>
+                 </a>
 
                 <p><strong>Target Hours:</strong> {{ goal["target_hours"] }}</p>
 
