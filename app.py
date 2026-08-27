@@ -562,6 +562,43 @@ def edit_goal(goal_id):
         "edit-goal.html",
         goal=goal
     )
+
+@app.route("/update-goal-progress/<int:goal_id>", methods=["POST"])
+def update_goal_progress(goal_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    progress = request.form["progress"]
+
+    try:
+        progress = int(progress)
+
+        if progress < 0 or progress > 100:
+            return "Progress must be between 0 and 100."
+
+    except ValueError:
+        return "Progress must be a valid number."
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        UPDATE study_goals
+        SET progress = ?
+        WHERE id = ? AND user_id = ?
+        """,
+        (
+            progress,
+            goal_id,
+            session["user_id"]
+        )
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("goals"))
 @app.route("/profile")
 def profile():
 
