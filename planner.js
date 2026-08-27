@@ -28,11 +28,12 @@ function validateStudyForm() {
         alert("Please select today or a future date.");
         return false;
     }
+    const studyDuration = parseFloat(duration);
 
-    if (duration === "" || duration <= 0) {
-        alert("Please enter a valid study duration.");
-        return false;
-    }
-
+    if (duration === "" || isNaN(studyDuration) || studyDuration < 0.5 ||     studyDuration > 12) {
+    alert("Study duration must be between 0.5 and 12 hours.");
+    return false;
+}
+    
     return true;
 }
