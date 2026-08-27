@@ -419,7 +419,81 @@ def complete_study(study_id):
     connection.close()
 
     return redirect(url_for("planner"))
+@app.route("/goals", methods=["GET", "POST"])
+def goals():
 
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    if request.method == "POST":
+
+        title = request.form["title"].strip()
+        description = request.form["description"].strip()
+        target_hours = request.form["target_hours"]
+
+        if not title or not description or not target_hours:
+            goals = connection.execute(
+                """
+                SELECT * FROM study_goals
+                WHERE user_id = ?
+                ORDER BY id DESC
+                """,
+                (session["user_id"],)
+            ).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "goals.html",
+                goals=goals,
+                error="All goal fields are required."
+            )
+
+        try:
+            target_hours = int(target_hours)
+
+            if target_hours <= 0:
+                connection.close()
+                return "Target study hours must be greater than 0."
+
+            connection.execute(
+                """
+                INSERT INTO study_goals
+                (user_id, title, description, target_hours, progress)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    session["user_id"],
+                    title,
+                    description,
+                    target_hours,
+                    0
+                )
+            )
+
+            connection.commit()
+
+        except ValueError:
+            connection.close()
+            return "Target study hours must be a valid number."
+
+    goals = connection.execute(
+        """
+        SELECT * FROM study_goals
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "goals.html",
+        goals=goals
+    )
 @app.route("/profile")
 def profile():
 
