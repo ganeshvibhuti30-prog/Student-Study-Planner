@@ -310,8 +310,64 @@ def add_study():
 
 
 @app.route("/profile")
-def profile():
+def profile(): 
 
+   @app.route("/edit-study/<int:study_id>", methods=["GET", "POST"])
+def edit_study(study_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    study = connection.execute(
+        """
+        SELECT * FROM study_sessions
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    ).fetchone()
+
+    if study is None:
+        connection.close()
+        return "Study session not found."
+
+    if request.method == "POST":
+
+        subject = request.form["subject"]
+        topic = request.form["topic"]
+        date = request.form["date"]
+        time = request.form["time"]
+        duration = request.form["duration"]
+
+        connection.execute(
+            """
+            UPDATE study_sessions
+            SET subject = ?, topic = ?, date = ?, time = ?, duration = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (
+                subject,
+                topic,
+                date,
+                time,
+                duration,
+                study_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("planner"))
+
+    connection.close()
+
+    return render_template(
+        "edit-study.html",
+        study=study
+    )
     if "user_id" not in session:
         return redirect(url_for("login"))
 
