@@ -35,6 +35,9 @@
             <!-- ADD EXAM -->
 
             <h2>Add Exam</h2>
+            <p>
+    Please enter the date and time of your upcoming exam.
+</p>
 
             <form action="{{ url_for('exams') }}"
                   method="POST">
@@ -68,11 +71,12 @@
                 </label>
 
                 <input
-                    type="date"
-                    id="exam_date"
-                    name="exam_date"
-                    required
-                >
+    type="date"
+    id="exam_date"
+    name="exam_date"
+    required
+    min="{{ today }}"
+>
 
 
                 <label for="exam_time">
