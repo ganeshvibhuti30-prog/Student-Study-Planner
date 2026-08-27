@@ -15,15 +15,11 @@
     <p>Plan your study session.</p>
 
     <form action="/add-study" method="POST" onsubmit="return validateStudyForm()">
-       <select id="subject">
-       <input type="text" id="topic">
-       <input type="date" id="date">
-       <input type="number" id="duration">  
 
         <label for="subject">Subject:</label>
         <br>
 
-        <select id="subject" name="subject">
+        <select id="subject" name="subject" required>
             <option value="">Select Subject</option>
             <option value="Python">Python</option>
             <option value="Mathematics">Mathematics</option>
@@ -83,7 +79,9 @@
         <button type="submit">Save Study Session</button>
 
     </form>
-  <script src="planner.js"></script>
+
+    <script src="planner.js"></script>
+
 </body>
 
 </html>
