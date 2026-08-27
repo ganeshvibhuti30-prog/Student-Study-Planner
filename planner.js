@@ -19,6 +19,16 @@ function validateStudyForm() {
         return false;
     }
 
+    const selectedDate = new Date(date);
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+        alert("Please select today or a future date.");
+        return false;
+    }
+
     if (duration === "" || duration <= 0) {
         alert("Please enter a valid study duration.");
         return false;
