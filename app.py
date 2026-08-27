@@ -386,6 +386,28 @@ def delete_study(study_id):
 
     return redirect(url_for("planner"))
 
+@app.route("/complete-study/<int:study_id>", methods=["POST"])
+def complete_study(study_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        UPDATE study_sessions
+        SET status = 'Completed'
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("planner"))
+
 @app.route("/profile")
 def profile():
 

@@ -71,6 +71,12 @@
     </button>
 </form>
 
+<form action="/complete-study/{{ study['id'] }}" method="POST" style="display: inline;">
+    <button type="submit">
+        Mark Completed
+    </button>
+</form>
+
     <script src="{{ url_for('static', filename='planner.js') }}"></script>
 
 </body>
