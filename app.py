@@ -244,14 +244,30 @@ def dashboard():
         return redirect(url_for("login"))
 
     return render_template("dashboard.html", user=user)
+
 @app.route("/planner")
 def planner():
 
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    return render_template("study-planner.html")
+    connection = get_db_connection()
 
+    sessions = connection.execute(
+        """
+        SELECT * FROM study_sessions
+        WHERE user_id = ?
+        ORDER BY date, time
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "study-planner.html",
+        sessions=sessions
+    )
 @app.route("/add-study", methods=["GET", "POST"])
 def add_study():
 

@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% if sessions %}
+    {% for study in sessions %}
+
+        <div class="study-session">
+
+            <h3>{{ study["subject"] }}</h3>
+
+            <p><strong>Topic:</strong> {{ study["topic"] }}</p>
+
+            <p><strong>Date:</strong> {{ study["date"] }}</p>
+
+            <p><strong>Time:</strong> {{ study["time"] }}</p>
+
+            <p><strong>Duration:</strong> {{ study["duration"] }} hours</p>
+
+            <p><strong>Status:</strong> {{ study["status"] }}</p>
+
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No study sessions added yet.</p>
+
+{% endif %}
 <link rel="stylesheet" href="css/study-planner.css">
 <script src="planner.js"></script>
 
@@ -20,7 +48,7 @@
 
     <h2>My Study Sessions</h2>
 
-    <p>No study sessions added yet.</p>
+    <p>My study sessions</p>
 
     <button>Add Study Session</button>
 
