@@ -648,6 +648,10 @@ def exams():
         exam_time = request.form["exam_time"].strip()
         exam_type = request.form["exam_type"].strip()
         preparation_status = request.form["preparation_status"].strip()
+        today = date.today().isoformat()
+        if exam_date < today:
+            connection.close()
+            return "Exam date cannot be in the past."
 
         if not subject_id or not exam_date or not exam_time or not exam_type or not preparation_status:
 
