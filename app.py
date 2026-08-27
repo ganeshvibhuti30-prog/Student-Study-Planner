@@ -274,12 +274,24 @@ def planner():
         (session["user_id"],)
     ).fetchall()
 
+    total_hours = connection.execute(
+        """
+        SELECT COALESCE(SUM(duration), 0)
+        FROM study_sessions
+        WHERE user_id = ?
+        """,
+        (session["user_id"],)
+    ).fetchone()[0]
+
     connection.close()
 
     return render_template(
         "study-planner.html",
-        sessions=sessions
+        sessions=sessions,
+        total_hours=total_hours
     )
+
+
 @app.route("/add-study", methods=["GET", "POST"])
 def add_study():
 
