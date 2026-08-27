@@ -75,6 +75,18 @@ def create_database():
         )
     """)
 
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS study_goals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            target_hours INTEGER NOT NULL,
+            progress INTEGER DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+
     connection.commit()
     connection.close()
 
