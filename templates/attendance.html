@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance Tracker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Attendance Tracker</h1>
+
+        <p>Track your attendance for each subject.</p>
+
+        <div class="attendance-form">
+
+            <label for="subject">Select Subject</label>
+
+            <select id="subject">
+                <option value="">-- Select Subject --</option>
+            </select>
+
+            <label for="conducted">Classes Conducted</label>
+
+            <input
+                type="number"
+                id="conducted"
+                min="0"
+                placeholder="Enter total classes"
+            >
+
+            <label for="attended">Classes Attended</label>
+
+            <input
+                type="number"
+                id="attended"
+                min="0"
+                placeholder="Enter attended classes"
+            >
+
+            <button type="button" id="calculateBtn">
+                Calculate Attendance
+            </button>
+
+        </div>
+
+        <div class="result">
+
+            <h2>Attendance Percentage</h2>
+
+            <p id="percentage">0%</p>
+
+            <p id="status"></p>
+
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/attendance.js') }}"></script>
+
+</body>
+</html>
