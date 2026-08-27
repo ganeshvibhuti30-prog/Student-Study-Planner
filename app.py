@@ -294,6 +294,16 @@ def planner():
         (session["user_id"],)
     ).fetchone()[0]
 
+    completed_sessions = connection.execute(
+    """
+    SELECT COUNT(*)
+    FROM study_sessions
+    WHERE user_id = ?
+    AND status = 'Completed'
+    """,
+    (session["user_id"],)
+).fetchone()[0]
+
     connection.close()
 
     return render_template(
