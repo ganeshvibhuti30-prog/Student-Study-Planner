@@ -252,6 +252,47 @@ def planner():
 
     return render_template("study-planner.html")
 
+@app.route("/add-study", methods=["GET", "POST"])
+def add_study():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+
+        subject = request.form["subject"]
+        topic = request.form["topic"]
+        date = request.form["date"]
+        time = request.form["time"]
+        duration = request.form["duration"]
+
+        connection = get_db_connection()
+
+        connection.execute(
+            """
+            INSERT INTO study_sessions
+            (user_id, subject, topic, date, time, duration, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                session["user_id"],
+                subject,
+                topic,
+                date,
+                time,
+                duration,
+                "Pending"
+            )
+        )
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("planner"))
+
+    return render_template("add-study.html")
+
+
 @app.route("/profile")
 def profile():
 
