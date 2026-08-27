@@ -14,14 +14,15 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 
 def get_db_connection():
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA foreign_keys = ON")
-    return connection
-
+     connection = sqlite3.connect(DATABASE)
+     connection.row_factory = sqlite3.Row
+     connection.execute("PRAGMA foreign_keys = ON")
+     return connection
 
 def create_database():
     connection = get_db_connection()
+   
+
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -57,6 +58,20 @@ def create_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
             UNIQUE(user_id, subject_code)
+        )
+    """)
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS study_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject TEXT NOT NULL,
+            topic TEXT NOT NULL,
+            date TEXT NOT NULL,
+            time TEXT NOT NULL,
+            duration INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     """)
 
