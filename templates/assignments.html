@@ -149,6 +149,9 @@
             <!-- ASSIGNMENT LIST -->
 
             <h2>Your Assignments</h2>
+            {% if not assignments %}
+    <p>No assignments added yet.</p>
+{% endif %}
 
             {% if assignments %}
 
