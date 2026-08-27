@@ -283,14 +283,25 @@ def planner():
         (session["user_id"],)
     ).fetchone()[0]
 
+    weekly_hours = connection.execute(
+        """
+        SELECT COALESCE(SUM(duration), 0)
+        FROM study_sessions
+        WHERE user_id = ?
+        AND date >= date('now', 'weekday 0', '-6 days')
+        AND date <= date('now', 'weekday 0')
+        """,
+        (session["user_id"],)
+    ).fetchone()[0]
+
     connection.close()
 
     return render_template(
         "study-planner.html",
         sessions=sessions,
-        total_hours=total_hours
+        total_hours=total_hours,
+        weekly_hours=weekly_hours
     )
-
 
 @app.route("/add-study", methods=["GET", "POST"])
 def add_study():
