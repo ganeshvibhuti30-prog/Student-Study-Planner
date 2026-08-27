@@ -365,6 +365,26 @@ def edit_study(study_id):
         study=study
     )
 
+@app.route("/delete-study/<int:study_id>", methods=["POST"])
+def delete_study(study_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        DELETE FROM study_sessions
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("planner"))
 
 @app.route("/profile")
 def profile():
