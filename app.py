@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
+from datetime import date, time
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -57,6 +58,35 @@ def create_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
             UNIQUE(user_id, subject_code)
+        )
+    """)
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS assignments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_id INTEGER NOT NULL,
+            description TEXT NOT NULL,
+            deadline TEXT NOT NULL,
+            priority TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'Pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
+        )
+    """)
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS exams (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_id INTEGER NOT NULL,
+            exam_date TEXT NOT NULL,
+            exam_time TEXT NOT NULL,
+            exam_type TEXT NOT NULL,
+            preparation_status TEXT NOT NULL DEFAULT 'Not Started',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
         )
     """)
 
@@ -392,6 +422,397 @@ def delete_subject(subject_id):
     connection.close()
 
     return redirect(url_for("subjects"))
+@app.route("/assignments", methods=["GET", "POST"])
+def assignments():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    if request.method == "POST":
+
+        subject_id = request.form["subject_id"].strip()
+        description = request.form["description"].strip()
+        deadline = request.form["deadline"].strip()
+        priority = request.form["priority"].strip()
+        status = request.form["status"].strip()
+
+        if not subject_id or not description or not deadline or not priority or not status:
+
+            subjects = connection.execute("""
+                SELECT *
+                FROM subjects
+                WHERE user_id = ?
+                ORDER BY subject_name
+            """, (session["user_id"],)).fetchall()
+
+            assignments_list = connection.execute("""
+                SELECT assignments.*, subjects.subject_name
+                FROM assignments
+                JOIN subjects ON assignments.subject_id = subjects.id
+                WHERE assignments.user_id = ?
+                ORDER BY assignments.deadline
+            """, (session["user_id"],)).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "assignments.html",
+                subjects=subjects,
+                assignments=assignments_list,
+                error="All assignment fields are required."
+            )
+        subject = connection.execute("""
+            SELECT id
+            FROM subjects
+            WHERE id = ? AND user_id = ?
+        """, (
+            subject_id,
+            session["user_id"]
+        )).fetchone()
+
+        if subject is None:
+            connection.close()
+            return "Invalid subject selected."
+
+        
+
+        connection.execute("""
+            INSERT INTO assignments
+            (
+                user_id,
+                subject_id,
+                description,
+                deadline,
+                priority,
+                status
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            session["user_id"],
+            subject_id,
+            description,
+            deadline,
+            priority,
+            status
+        ))
+
+        connection.commit()
+
+    subjects = connection.execute("""
+        SELECT *
+        FROM subjects
+        WHERE user_id = ?
+        ORDER BY subject_name
+    """, (session["user_id"],)).fetchall()
+
+    assignments_list = connection.execute("""
+        SELECT assignments.*, subjects.subject_name
+        FROM assignments
+        JOIN subjects ON assignments.subject_id = subjects.id
+        WHERE assignments.user_id = ?
+        ORDER BY assignments.deadline
+    """, (session["user_id"],)).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "assignments.html",
+        subjects=subjects,
+        assignments=assignments_list
+    )
+@app.route("/assignments/edit/<int:assignment_id>", methods=["GET", "POST"]) 
+def edit_assignment(assignment_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    assignment = connection.execute("""
+        SELECT *
+        FROM assignments
+        WHERE id = ? AND user_id = ?
+    """, (
+        assignment_id,
+        session["user_id"]
+    )).fetchone()
+
+    if assignment is None:
+        connection.close()
+        return redirect(url_for("assignments"))
+
+    if request.method == "POST":
+
+        subject_id = request.form["subject_id"].strip()
+        description = request.form["description"].strip()
+        deadline = request.form["deadline"].strip()
+        priority = request.form["priority"].strip()
+        status = request.form["status"].strip()
+
+        connection.execute("""
+            UPDATE assignments
+            SET subject_id = ?,
+                description = ?,
+                deadline = ?,
+                priority = ?,
+                status = ?
+            WHERE id = ? AND user_id = ?
+        """, (
+            subject_id,
+            description,
+            deadline,
+            priority,
+            status,
+            assignment_id,
+            session["user_id"]
+        ))
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("assignments"))
+
+    subjects = connection.execute("""
+        SELECT *
+        FROM subjects
+        WHERE user_id = ?
+        ORDER BY subject_name
+    """, (session["user_id"],)).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "edit_assignment.html",
+        assignment=assignment,
+        subjects=subjects
+    )
+
+
+@app.route("/assignments/delete/<int:assignment_id>", methods=["POST"])
+def delete_assignment(assignment_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute("""
+        DELETE FROM assignments
+        WHERE id = ? AND user_id = ?
+    """, (
+        assignment_id,
+        session["user_id"]
+    ))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("assignments"))
+
+
+@app.route("/assignments/complete/<int:assignment_id>", methods=["POST"])
+def complete_assignment(assignment_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute("""
+        UPDATE assignments
+        SET status = 'Completed'
+        WHERE id = ? AND user_id = ?
+    """, (
+        assignment_id,
+        session["user_id"]
+    ))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("assignments"))
+@app.route("/exams", methods=["GET", "POST"])
+def exams():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    if request.method == "POST":
+
+        subject_id = request.form["subject_id"].strip()
+        exam_date = request.form["exam_date"].strip()
+        exam_time = request.form["exam_time"].strip()
+        exam_type = request.form["exam_type"].strip()
+        preparation_status = request.form["preparation_status"].strip()
+        today = date.today().isoformat()
+        if exam_date < today:
+            connection.close()
+            return "Exam date cannot be in the past."
+
+        if not subject_id or not exam_date or not exam_time or not exam_type or not preparation_status:
+
+            subjects = connection.execute("""
+                SELECT *
+                FROM subjects
+                WHERE user_id = ?
+                ORDER BY subject_name
+            """, (session["user_id"],)).fetchall()
+
+            exams_list = connection.execute("""
+                SELECT exams.*, subjects.subject_name
+                FROM exams
+                JOIN subjects ON exams.subject_id = subjects.id
+                WHERE exams.user_id = ?
+                ORDER BY exams.exam_date, exams.exam_time
+            """, (session["user_id"],)).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "exams.html",
+                subjects=subjects,
+                exams=exams_list,
+                error="All exam fields are required."
+            )
+
+        connection.execute("""
+            INSERT INTO exams
+            (
+                user_id,
+                subject_id,
+                exam_date,
+                exam_time,
+                exam_type,
+                preparation_status
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            session["user_id"],
+            subject_id,
+            exam_date,
+            exam_time,
+            exam_type,
+            preparation_status
+        ))
+
+        connection.commit()
+
+    subjects = connection.execute("""
+        SELECT *
+        FROM subjects
+        WHERE user_id = ?
+        ORDER BY subject_name
+    """, (session["user_id"],)).fetchall()
+
+    exams_list = connection.execute("""
+        SELECT exams.*, subjects.subject_name
+        FROM exams
+        JOIN subjects ON exams.subject_id = subjects.id
+        WHERE exams.user_id = ?
+        ORDER BY exams.exam_date, exams.exam_time
+    """, (session["user_id"],)).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "exams.html",
+        subjects=subjects,
+        exams=exams_list
+    )
+
+
+@app.route("/exams/edit/<int:exam_id>", methods=["GET", "POST"])
+def edit_exam(exam_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    exam = connection.execute("""
+        SELECT *
+        FROM exams
+        WHERE id = ? AND user_id = ?
+    """, (
+        exam_id,
+        session["user_id"]
+    )).fetchone()
+
+    if exam is None:
+        connection.close()
+        return redirect(url_for("exams"))
+
+    if request.method == "POST":
+
+        subject_id = request.form["subject_id"].strip()
+        exam_date = request.form["exam_date"].strip()
+        exam_time = request.form["exam_time"].strip()
+        exam_type = request.form["exam_type"].strip()
+        preparation_status = request.form["preparation_status"].strip()
+
+        connection.execute("""
+            UPDATE exams
+            SET subject_id = ?,
+                exam_date = ?,
+                exam_time = ?,
+                exam_type = ?,
+                preparation_status = ?
+            WHERE id = ? AND user_id = ?
+        """, (
+            subject_id,
+            exam_date,
+            exam_time,
+            exam_type,
+            preparation_status,
+            exam_id,
+            session["user_id"]
+        ))
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("exams"))
+
+    subjects = connection.execute("""
+        SELECT *
+        FROM subjects
+        WHERE user_id = ?
+        ORDER BY subject_name
+    """, (session["user_id"],)).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "edit_exam.html",
+        exam=exam,
+        subjects=subjects
+    )
+
+
+@app.route("/exams/delete/<int:exam_id>", methods=["POST"])
+def delete_exam(exam_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute("""
+        DELETE FROM exams
+        WHERE id = ? AND user_id = ?
+                """, (
+        exam_id,
+        session["user_id"]
+    ))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("exams"))
 
 @app.route("/logout")
 def logout():
