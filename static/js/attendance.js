@@ -1,37 +1,36 @@
-const conductedInput = document.getElementById("conducted");
-const attendedInput = document.getElementById("attended");
-const calculateBtn = document.getElementById("calculateBtn");
+document.addEventListener("DOMContentLoaded", function () {
 
-const percentageDisplay = document.getElementById("percentage");
-const statusDisplay = document.getElementById("status");
+    const conductedInput = document.getElementById("classes_conducted");
+    const attendedInput = document.getElementById("classes_attended");
 
-calculateBtn.addEventListener("click", function () {
-
-    const conducted = Number(conductedInput.value);
-    const attended = Number(attendedInput.value);
-
-    if (conducted <= 0) {
-        alert("Please enter the number of classes conducted.");
+    if (!conductedInput || !attendedInput) {
         return;
     }
 
-    if (attended < 0) {
-        alert("Attended classes cannot be negative.");
-        return;
-    }
+    attendedInput.addEventListener("input", function () {
 
-    if (attended > conducted) {
-        alert("Attended classes cannot be greater than conducted classes.");
-        return;
-    }
+        const conducted = parseInt(conductedInput.value);
+        const attended = parseInt(attendedInput.value);
 
-    const percentage = (attended / conducted) * 100;
+        if (
+            !isNaN(conducted) &&
+            !isNaN(attended) &&
+            conducted > 0
+        ) {
 
-    percentageDisplay.textContent = percentage.toFixed(2) + "%";
+            if (attended > conducted) {
+                attendedInput.setCustomValidity(
+                    "Attended classes cannot be greater than conducted classes."
+                );
+            } else {
+                attendedInput.setCustomValidity("");
+            }
 
-    if (percentage >= 75) {
-        statusDisplay.textContent = "Attendance is good.";
-    } else {
-        statusDisplay.textContent = "Attendance is below 75%.";
-    }
+        } else {
+
+            attendedInput.setCustomValidity("");
+
+        }
+    });
+
 });
