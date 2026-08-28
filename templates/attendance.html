@@ -144,42 +144,37 @@
 
             <!-- CLASSES CONDUCTED -->
             <div class="form-group">
-
                 <label for="classes_conducted">
                     Classes Conducted
                 </label>
-
                 <input
                     type="number"
                     name="classes_conducted"
                     id="classes_conducted"
-                    min="1"
-                    required
+                    min="0"
                     placeholder="Enter total classes"
+                    required
                     value="{% if edit_attendance %}{{ edit_attendance['classes_conducted'] }}{% endif %}"
                 >
-
             </div>
 
 
             <!-- CLASSES ATTENDED -->
             <div class="form-group">
-
                 <label for="classes_attended">
                     Classes Attended
                 </label>
-
                 <input
                     type="number"
                     name="classes_attended"
                     id="classes_attended"
                     min="0"
-                    required
                     placeholder="Enter attended classes"
+                    required
                     value="{% if edit_attendance %}{{ edit_attendance['classes_attended'] }}{% endif %}"
                 >
-
             </div>
+
 
 
             {% if edit_attendance %}
