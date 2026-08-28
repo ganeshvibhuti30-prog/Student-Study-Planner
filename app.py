@@ -304,6 +304,14 @@ def planner():
     (session["user_id"],)
 ).fetchone()[0]
 
+    return render_template(
+    "study-planner.html",
+    sessions=sessions,
+    total_hours=total_hours,
+    weekly_hours=weekly_hours,
+    completed_sessions=completed_sessions
+)
+
     connection.close()
 
     return render_template(
@@ -596,11 +604,17 @@ def edit_goal(goal_id):
         goal=goal
     )
 
-@app.route("/update-goal-progress/<int:goal_id>", methods=["POST"])
+@app.route("/update-goal-progress/<int:goal_id>", methods=["GET", "POST"])
 def update_goal_progress(goal_id):
 
     if "user_id" not in session:
         return redirect(url_for("login"))
+
+    if request.method == "GET":
+        return render_template(
+            "update-progress.html",
+            goal_id=goal_id
+        )
 
     progress = request.form["progress"]
 
@@ -631,6 +645,7 @@ def update_goal_progress(goal_id):
     connection.commit()
     connection.close()
 
+    return redirect(url_for("goals"))
     return redirect(url_for("goals"))
 @app.route("/profile")
 def profile():
@@ -881,4 +896,4 @@ def logout():
 
 if __name__ == "__main__":
     create_database()
-    app.run(debug=True)
+    app.run(debug=True, host="127.0.0.1", port=5001)
