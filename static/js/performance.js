@@ -22,12 +22,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         bar.style.width = percentage + "%";
 
-        if (percentage >= 80) {
+
+        // Remove previous status classes
+        bar.classList.remove("good", "average", "low");
+
+
+        // Add color based on performance
+        if (percentage >= 75) {
+
             bar.classList.add("good");
-        } else if (percentage >= 60) {
+
+        } else if (percentage >= 50) {
+
             bar.classList.add("average");
+
         } else {
+
             bar.classList.add("low");
+
         }
 
     });
