@@ -68,32 +68,41 @@ h2 {
     margin-bottom: 35px;
 }
 
+.overall-percentage {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    line-height: 1;
+}
+
 .overall-card {
     background: #f7f7f7;
     border-left: 4px solid #333;
-    padding: 20px;
-    border-radius: 6px;
+    padding: 28px 20px;
+    border-radius: 8px;
     text-align: center;
-}
-
-.overall-percentage {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .success {
     color: #267a3d;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
 }
 
 .warning {
     color: #b3261e;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
 }
 
+.overall-card:has(.success) {
+    border-left-color: #267a3d;
+}
+
+.overall-card:has(.warning) {
+    border-left-color: #b3261e;
+}
 
 /* ==============================
    FORM SECTION
