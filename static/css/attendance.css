@@ -395,3 +395,10 @@ h2 {
     }
 
 }
+/* ==============================
+   ATTENDANCE FORM SPACING
+   ============================== */
+
+.attendance-form {
+    margin-bottom: 25px;
+}
