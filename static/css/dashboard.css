@@ -11,6 +11,10 @@ body {
     padding: 40px 20px;
 }
 
+/* ==============================
+   TOP NAVIGATION
+   ============================== */
+
 .top-navigation {
     display: flex;
     justify-content: flex-end;
@@ -30,6 +34,11 @@ body {
     text-decoration: underline;
 }
 
+
+/* ==============================
+   DASHBOARD
+   ============================== */
+
 .dashboard-container {
     max-width: 800px;
     margin: auto;
@@ -41,6 +50,11 @@ body {
     border-radius: 12px;
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
 }
+
+
+/* ==============================
+   HEADER
+   ============================== */
 
 .dashboard-header {
     text-align: center;
@@ -55,6 +69,11 @@ body {
     color: #666;
 }
 
+
+/* ==============================
+   SUCCESS MESSAGE
+   ============================== */
+
 .success-message {
     color: #2e7d32;
     background: #e8f5e9;
@@ -64,6 +83,11 @@ body {
     margin-bottom: 20px;
     text-align: center;
 }
+
+
+/* ==============================
+   STUDENT INFORMATION
+   ============================== */
 
 .student-info {
     display: grid;
@@ -82,28 +106,77 @@ body {
     margin-bottom: 5px;
 }
 
+
+/* ==============================
+   DASHBOARD NAVIGATION
+   ============================== */
+
 .navigation {
     display: flex;
     gap: 10px;
     justify-content: center;
+    width: 100%;
 }
 
 .navigation a {
     text-decoration: none;
+    flex: 1;
+    min-width: 0;
 }
 
 .navigation button {
-    width: 130px;
+    width: 100%;
     min-height: 52px;
-    padding: 11px 20px;
+    padding: 10px 8px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     background: #222;
     color: white;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .navigation button:hover {
     opacity: 0.85;
+}
+
+
+/* ==============================
+   MOBILE
+   ============================== */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 20px 10px;
+    }
+
+    .dashboard-card {
+        padding: 25px 20px;
+    }
+
+    .navigation {
+        flex-wrap: wrap;
+    }
+
+    .navigation a {
+        flex: 1 1 calc(50% - 5px);
+    }
+
+    .navigation button {
+        min-height: 50px;
+    }
+}
+
+
+@media (max-width: 400px) {
+
+    .navigation {
+        flex-direction: column;
+    }
+
+    .navigation a {
+        width: 100%;
+    }
 }
