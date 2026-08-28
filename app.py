@@ -852,6 +852,7 @@ def marks():
             subjects.subject_code,
             subjects.subject_name,
             subjects.semester,
+            subjects.credits,
             marks.id AS mark_id,
             marks.marks_obtained,
             marks.max_marks
@@ -866,14 +867,21 @@ def marks():
         session["user_id"]
     )).fetchall()
 
-    # Calculate percentage and grade
+    # Calculate percentage, grade, and grade point
     subject_data = []
+
+    total_credit_points = 0
+    total_credits = 0
 
     for subject in subjects:
 
         item = dict(subject)
 
-        if item["marks_obtained"] is not None and item["max_marks"]:
+        if (
+            item["marks_obtained"] is not None
+            and item["max_marks"] is not None
+            and item["max_marks"] > 0
+        ):
 
             percentage = (
                 item["marks_obtained"] /
@@ -885,31 +893,59 @@ def marks():
             # Grade system
             if percentage >= 90:
                 item["grade"] = "A+"
+                item["grade_point"] = 10
+
             elif percentage >= 80:
                 item["grade"] = "A"
+                item["grade_point"] = 9
+
             elif percentage >= 70:
                 item["grade"] = "B+"
+                item["grade_point"] = 8
+
             elif percentage >= 60:
                 item["grade"] = "B"
+                item["grade_point"] = 7
+
             elif percentage >= 50:
                 item["grade"] = "C"
+                item["grade_point"] = 6
+
             elif percentage >= 40:
                 item["grade"] = "D"
+                item["grade_point"] = 5
+
             else:
                 item["grade"] = "F"
+                item["grade_point"] = 0
+
+            # Calculate credit points for CGPA
+            total_credit_points += (
+                item["credits"] * item["grade_point"]
+            )
+
+            total_credits += item["credits"]
 
         else:
-
             item["percentage"] = None
             item["grade"] = None
+            item["grade_point"] = None
 
         subject_data.append(item)
+
+    # Calculate CGPA
+    if total_credits > 0:
+        cgpa = round(
+            total_credit_points / total_credits,
+            2
+        )
+    else:
+        cgpa = None
 
     # If editing, get the existing mark
     edit_mark = None
 
     if edit_id:
-
         edit_mark = connection.execute("""
             SELECT *
             FROM marks
@@ -926,8 +962,9 @@ def marks():
         "marks.html",
         subjects=subject_data,
         error=error,
-        edit_mark=edit_mark
-    )   
+        edit_mark=edit_mark,
+        cgpa=cgpa
+    )
 
 @app.route("/marks/delete/<int:mark_id>", methods=["POST"])
 def delete_mark(mark_id):

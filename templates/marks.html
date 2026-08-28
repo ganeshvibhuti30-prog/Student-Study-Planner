@@ -17,6 +17,31 @@
             margin: 0;
             padding: 30px;
         }
+      
+        .cgpa-card {
+            margin: 25px 0 30px;
+            padding: 25px;
+            background: #333;
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .cgpa-card h2 {
+            margin: 0 0 8px;
+            font-size: 22px;
+        }
+
+        .cgpa-value {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .cgpa-description {
+            font-size: 14px;
+            opacity: 0.85;
+        }
 
         .container {
             max-width: 1000px;
@@ -300,16 +325,56 @@
 
 <div class="container">
 
-    <h1>Marks Tracker</h1>
+        <h1>Marks Tracker</h1>
 
     <p class="subtitle">
         Enter and manage your marks for each subject
     </p>
 
+
+    <!-- CGPA SUMMARY -->
+
+    {% if cgpa is not none %}
+
+        <div class="cgpa-card">
+
+            <h2>Current CGPA</h2>
+
+            <div class="cgpa-value">
+                {{ cgpa }}
+            </div>
+
+            <div class="cgpa-description">
+                Based on your entered marks and subject credits
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <div class="cgpa-card">
+
+            <h2>Current CGPA</h2>
+
+            <div class="cgpa-value">
+                --
+            </div>
+
+            <div class="cgpa-description">
+                Enter marks for your subjects to calculate CGPA
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
     {% if error %}
-        <div class="error">
+
+         <div class="error">
             {{ error }}
         </div>
+
     {% endif %}
 
 
