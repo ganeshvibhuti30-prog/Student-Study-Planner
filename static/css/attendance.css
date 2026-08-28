@@ -110,17 +110,21 @@ h2 {
 
 .form-section {
     margin-bottom: 40px;
+    padding: 22px;
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
 }
 
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
 }
 
 .form-group input,
@@ -131,12 +135,14 @@ h2 {
     border-radius: 6px;
     font-size: 14px;
     background: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
     border-color: #333;
+    box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.08);
 }
 
 
@@ -169,10 +175,15 @@ h2 {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .save-button:hover {
     background: #222;
+}
+
+.save-button:active {
+    transform: scale(0.99);
 }
 
 .cancel-button {
@@ -208,6 +219,14 @@ h2 {
     padding: 20px;
     margin-bottom: 14px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.subject-card:has(.good) {
+    border-left-color: #267a3d;
+}
+
+.subject-card:has(.low) {
+    border-left-color: #b3261e;
 }
 
 .subject-info h3 {
