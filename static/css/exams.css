@@ -1,0 +1,170 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+.exams-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.exams-card {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    margin: 0;
+    color: #666;
+}
+
+h2 {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+form > button {
+    width: 100%;
+}
+
+button {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 35px 0;
+}
+
+.error-message {
+    background: #ffe5e5;
+    color: #b00020;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.exam-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.exam-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.exam-details {
+    flex: 1;
+}
+
+.exam-details h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.exam-details p {
+    margin: 8px 0;
+}
+
+.countdown {
+    font-weight: bold;
+    margin-top: 15px !important;
+}
+
+.exam-actions {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+.exam-actions form {
+    margin: 0;
+}
+
+.exam-actions button {
+    width: 100%;
+}
+
+.empty-message {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+@media (max-width: 700px) {
+
+    .exams-card {
+        padding: 20px;
+    }
+
+    .exam-item {
+        flex-direction: column;
+    }
+
+    .exam-actions {
+        width: 100%;
+    }
+}
