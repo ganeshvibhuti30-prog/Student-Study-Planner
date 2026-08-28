@@ -5,89 +5,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daily Study Planner</title>
+    <title>Study Planner</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/study-planner.css') }}">
 </head>
 
 <body>
 
-    <h1>Daily Study Planner</h1>
+    <header>
+        <h1>Student Study Planner</h1>
+        <p>Plan your study sessions and stay organized.</p>
 
-    <p>Plan and track your study sessions for each day.</p>
+        <nav>
+            <a href="/planner">Planner</a>
+            <a href="/goals">Goals</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
 
-    <hr>
+    <main>
 
-    <label for="planner-date">Select Date:</label>
-    <input type="date" id="planner-date">
+        <section class="summary">
 
-    <h2>Study Sessions</h2>
-
-    <h3>Total Study Hours: {{ total_hours }}</h3>
-
-   <h3>This Week's Study Hours: {{ weekly_hours }}</h3>
- 
-   <h3>Completed Sessions: {{ completed_sessions }}</h3>
-    
-
-    <p> My study sessions </p>
-
-    {% if sessions %}
-
-        {% for study in sessions %}
-
-            <div class="study-session" data-study-date="{{ study['date'] }}">
-
-                <h3>{{ study["subject"] }}</h3>
-
-                <p><strong>Topic:</strong> {{ study["topic"] }}</p>
-
-                <p><strong>Date:</strong> {{ study["date"] }}</p>
-
-                <p><strong>Time:</strong> {{ study["time"] }}</p>
-
-                <p><strong>Duration:</strong> {{ study["duration"] }} hours</p>
-
-                <p><strong>Status:</strong> {{ study["status"] }}</p>
-
-                <a href="/edit-study/{{ study['id'] }}">
-                    <button type="button">Edit</button>
-                </a>
-
+            <div class="summary-card">
+                <h3>Total Study Hours</h3>
+                <p>{{ total_hours }}</p>
             </div>
 
-            <hr>
+            <div class="summary-card">
+                <h3>This Week</h3>
+                <p>{{ weekly_hours }}</p>
+            </div>
 
-        {% endfor %}
+            <div class="summary-card">
+                <h3>Completed Sessions</h3>
+                <p>{{ completed_sessions }}</p>
+            </div>
 
-    {% else %}
+        </section>
 
-        <p>No study sessions added yet.</p>
+        <section class="planner-section">
 
-    {% endif %}
+            <div class="section-header">
+                <h2>My Study Sessions</h2>
 
-    <p id="no-daily-sessions" style="display: none;">
-        No study sessions planned for this date.
-    </p>
+                <a href="/add-study">
+                    <button type="button">+ Add Study Session</button>
+                </a>
+            </div>
 
-    <a href="/add-study">
-        <button type="button">Add Study Session</button>
-    </a>
-  
-    <form action="/delete-study/{{ study['id'] }}" method="POST" style="display: inline;">
-    <button type="submit" onclick="return confirm('Are you sure you want to delete this study session?');">
-        Delete
-    </button>
-</form>
+            {% if sessions %}
 
-<form action="/complete-study/{{ study['id'] }}" method="POST" style="display: inline;">
-    <button type="submit">
-        Mark Completed
-    </button>
-</form>
+                {% for study in sessions %}
 
-    <script src="{{ url_for('static', filename='planner.js') }}"></script>
+                    <div class="study-session">
+
+                        <h3>{{ study["subject"] }}</h3>
+
+                        <p>
+                            <strong>Topic:</strong>
+                            {{ study["topic"] }}
+                        </p>
+
+                        <p>
+                            <strong>Date:</strong>
+                            {{ study["date"] }}
+                        </p>
+
+                        <p>
+                            <strong>Time:</strong>
+                            {{ study["time"] }}
+                        </p>
+
+                        <p>
+                            <strong>Duration:</strong>
+                            {{ study["duration"] }} hours
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            {{ study["status"] }}
+                        </p>
+
+                        <div class="session-buttons">
+
+                            <a href="/edit-study/{{ study['id'] }}">
+                                <button type="button">Edit</button>
+                            </a>
+
+                            {% if study["status"] != "Completed" %}
+
+                                <form action="/complete-study/{{ study['id'] }}"
+                                      method="POST"
+                                      style="display:inline;">
+
+                                    <button type="submit">
+                                        Mark Completed
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                            <form action="/delete-study/{{ study['id'] }}"
+                                  method="POST"
+                                  style="display:inline;">
+
+                                <button type="submit">
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-state">
+                    <h3>No study sessions yet</h3>
+                    <p>Add your first study session to get started.</p>
+
+                    <a href="/add-study">
+                        <button type="button">
+                            Add Study Session
+                        </button>
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
 
 </body>
-
-</html>
+</html>    
