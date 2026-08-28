@@ -303,6 +303,18 @@
             border-radius: 6px;
         }
 
+        .chart-bar.high {
+            background: #2e7d32;
+        }
+
+        .chart-bar.low {
+            background: #c62828;
+        }
+
+        .chart-bar.average {
+            ackground: #f9a825;
+        }
+
         .bottom-buttons {
             display: flex;
             gap: 12px;
@@ -714,7 +726,15 @@
                     <div class="chart-background">
 
                         <div
-                            class="chart-bar"
+                            class="chart-bar
+                                {% if subject['percentage'] >= 75 %}
+                                    high
+                                {% elif subject['percentage'] < 50 %}
+                                    low
+                                {% else %}
+                                    average
+                                {% endif %}
+                            "
                             style="width: {{ subject['percentage'] }}%;"
                         ></div>
 
