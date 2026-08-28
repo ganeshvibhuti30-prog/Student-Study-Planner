@@ -157,7 +157,21 @@
             margin-bottom: 15px;
             border-radius: 9px;
             border-left: 5px solid #333;
-        }
+}
+
+/* Performance Status Colors */
+
+.subject-card.high {
+    border-left-color: #2e7d32;
+}
+
+.subject-card.low {
+    border-left-color: #c62828;
+}
+
+.subject-card.average {
+    border-left-color: #333;
+}
 
         .subject-header {
             display: flex;
@@ -178,6 +192,16 @@
             line-height: 1.6;
         }
 
+        .subject-details .high {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .subject-details .low {
+            color: #c62828;
+            font-weight: bold;
+        }
+
         .performance {
             margin-top: 12px;
         }
@@ -194,7 +218,19 @@
             height: 100%;
             background: #333;
             border-radius: 10px;
-        }
+}
+
+.progress-bar.high {
+    background: #2e7d32;
+}
+
+.progress-bar.low {
+    background: #c62828;
+}
+
+.progress-bar.average {
+    background: #333;
+}
 
         .actions {
             display: flex;
@@ -507,7 +543,17 @@
 
             {% for subject in subjects %}
 
-                <div class="subject-card">
+                <div class="subject-card
+                    {% if subject['percentage'] is not none %}
+                        {% if subject['percentage'] >= 75 %}
+                            high
+                        {% elif subject['percentage'] < 50 %}
+                            low
+                        {% else %}
+                            average
+                        {% endif %}
+                   {% endif %}
+                ">
 
                     <div class="subject-header">
 
@@ -535,7 +581,15 @@
                                     <br>
 
                                     Percentage:
-                                    {{ subject['percentage'] }}%
+                                    <span class="
+                                        {% if subject['percentage'] >= 75 %}
+                                            high
+                                        {% elif subject['percentage'] < 50 %}
+                                            low
+                                        {% endif %}
+                                    ">
+                                        {{ subject['percentage'] }}%
+                                    </span>
 
                                     <br>
 
@@ -598,7 +652,15 @@
                             <div class="progress-background">
 
                                 <div
-                                    class="progress-bar"
+                                    class="progress-bar
+                                        {% if subject['percentage'] >= 75 %}
+                                            high
+                                        {% elif subject['percentage'] < 50 %}
+                                            low
+                                        {% else %}
+                                            average
+                                        {% endif %}
+                                    "
                                     style="width: {{ subject['percentage'] }}%;"
                                 ></div>
 
