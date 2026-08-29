@@ -63,39 +63,33 @@
             </div>
 
             <div class="navigation">
-                
-                <a href="{{ url_for('subjects') }}">
-                    <button type="button">
-                        Subject Setup
-                    </button>
-                </a>
 
-                <a href="{{ url_for('profile') }}">
-                    <button type="button">
-                        My Profile
-                    </button>
-                </a>
-                <a href="{{ url_for('assignments') }}">
-    <button type="button">
-        Assignments
-    </button>
-</a>
+    <a href="/planner">
+        <button type="button">Planner</button>
+    </a>
 
-<a href="{{ url_for('exams') }}">
-    <button type="button">
-        Exams
-    </button>
-</a>
+    <a href="/subjects">
+        <button type="button">Subjects</button>
+    </a>
 
-                <a href="{{ url_for('logout') }}"
-                   onclick="return confirm('Are you sure you want to logout?');">
-                    <button type="button">
-                        Logout
-                    </button>
-                </a>
+    <a href="/add-study">
+        <button type="button">Add Study Session</button>
+    </a>
 
-            </div>
+    <a href="/goals">
+        <button type="button">Goals</button>
+    </a>
 
+    <a href="/profile">
+        <button type="button">My Profile</button>
+    </a>
+
+    <a href="/logout"
+       onclick="return confirm('Are you sure you want to logout?');">
+        <button type="button">Logout</button>
+    </a>
+
+</div>
         </div>
 
     </div>
