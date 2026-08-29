@@ -64,58 +64,44 @@
 
 <div class="navigation">
 
-<<<<<<< HEAD
-                <a href="{{ url_for('marks') }}">
-                    <button type="button">
-                        Marks Tracker
-                    </button>
-                </a>
+    <a href="{{ url_for('profile') }}">
+        <button type="button">My Profile</button>
+    </a>
 
-                <a href="{{ url_for('attendance') }}">
-                    <button type="button">
-                        Attendance Tracker
-                    </button>
-                </a>
-  
-                <a href="{{ url_for('performance') }}">
-                   <button type="button">
-                       Performance
-                   </button>
-                </a>
+    <a href="{{ url_for('planner') }}">
+        <button type="button">Study Planner</button>
+    </a>
 
-                <a href="{{ url_for('profile') }}">
-                    <button type="button">
-                        My Profile
-                    </button>
-                </a>
-=======
-<a href="{{ url_for('subjects') }}">
-    <button type="button">Subject Setup</button>
-</a>
->>>>>>> upstream/main
+    <a href="{{ url_for('subjects') }}">
+        <button type="button">Subject Setup</button>
+    </a>
 
-<a href="{{ url_for('planner') }}">
-    <button type="button">Study Planner</button>
-</a>
+    <a href="{{ url_for('add_study') }}">
+        <button type="button">Add Study Session</button>
+    </a>
 
-<a href="{{ url_for('add_study') }}">
-    <button type="button">Add Study Session</button>
-</a>
+    <a href="{{ url_for('goals') }}">
+        <button type="button">Goals</button>
+    </a>
 
-<a href="{{ url_for('goals') }}">
-    <button type="button">Goals</button>
-</a>
+    <a href="{{ url_for('attendance') }}">
+        <button type="button">Attendance Tracker</button>
+    </a>
 
-<a href="{{ url_for('profile') }}">
-    <button type="button">My Profile</button>
-</a>
+    <a href="{{ url_for('marks') }}">
+        <button type="button">Marks Tracker</button>
+    </a>
 
-<a href="{{ url_for('logout') }}"
-   onclick="return confirm('Are you sure you want to logout?');">
-    <button type="button">Logout</button>
-</a>
+    <a href="{{ url_for('performance') }}">
+        <button type="button">Performance</button>
+    </a>
 
-</div>
+    <a href="{{ url_for('logout') }}"
+       onclick="return confirm('Are you sure you want to logout?');">
+        <button type="button">Logout</button>
+    </a>
+
+</div>        
 
     </div>
 
