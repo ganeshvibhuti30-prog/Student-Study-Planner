@@ -14,14 +14,15 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 
 def get_db_connection():
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA foreign_keys = ON")
-    return connection
-
+     connection = sqlite3.connect(DATABASE)
+     connection.row_factory = sqlite3.Row
+     connection.execute("PRAGMA foreign_keys = ON")
+     return connection
 
 def create_database():
     connection = get_db_connection()
+   
+
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -61,7 +62,7 @@ def create_database():
     """)
 
     connection.execute("""
-        CREATE TABLE IF NOT EXISTS attendance (
+            CREATE TABLE IF NOT EXISTS attendance (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             subject_id INTEGER NOT NULL,
@@ -80,20 +81,46 @@ def create_database():
             UNIQUE(user_id, subject_id)
         )
     """)
-    
+
     connection.execute("""
         CREATE TABLE IF NOT EXISTS marks (
-           id INTEGER PRIMARY KEY AUTOINCREMENT,
-           user_id INTEGER NOT NULL,
-           subject_id INTEGER NOT NULL,
-           marks_obtained REAL NOT NULL,
-           max_marks REAL NOT NULL,
-           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-           FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
-           UNIQUE(user_id, subject_id)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_id INTEGER NOT NULL,
+            marks_obtained REAL NOT NULL,
+            max_marks REAL NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+            UNIQUE(user_id, subject_id)
         )
-    """)    
+    """)
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS study_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject TEXT NOT NULL,
+            topic TEXT NOT NULL,
+            date TEXT NOT NULL,
+            time TEXT NOT NULL,
+            duration INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS study_goals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            target_hours INTEGER NOT NULL,
+            progress INTEGER DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
 
     connection.commit()
     connection.close()
@@ -265,9 +292,484 @@ def dashboard():
 
     return render_template("dashboard.html", user=user)
 
+@app.route("/planner")
+def planner():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    sessions = connection.execute(
+        """
+        SELECT * FROM study_sessions
+        WHERE user_id = ?
+        ORDER BY date, time
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    total_hours = connection.execute(
+        """
+        SELECT COALESCE(SUM(duration), 0)
+        FROM study_sessions
+        WHERE user_id = ?
+        """,
+        (session["user_id"],)
+    ).fetchone()[0]
+
+    weekly_hours = connection.execute(
+        """
+        SELECT COALESCE(SUM(duration), 0)
+        FROM study_sessions
+        WHERE user_id = ?
+        AND date >= date('now', 'weekday 0', '-6 days')
+        AND date <= date('now', 'weekday 0')
+        """,
+        (session["user_id"],)
+    ).fetchone()[0]
+
+    completed_sessions = connection.execute(
+    """
+    SELECT COUNT(*)
+    FROM study_sessions
+    WHERE user_id = ?
+    AND status = 'Completed'
+    """,
+    (session["user_id"],)
+).fetchone()[0]
+    connection.close()
+
+    return render_template(
+        "study-planner.html",
+        sessions=sessions,
+        total_hours=total_hours,
+        weekly_hours=weekly_hours,
+        completed_sessions=completed_sessions
+    )
+   
+@app.route("/add-study", methods=["GET", "POST"])
+def add_study():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+
+        subject = request.form["subject"]
+        topic = request.form["topic"]
+        date = request.form["date"]
+        time = request.form["time"]
+        duration = request.form["duration"]
+
+        connection = get_db_connection()
+
+        connection.execute(
+            """
+            INSERT INTO study_sessions
+            (user_id, subject, topic, date, time, duration, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                session["user_id"],
+                subject,
+                topic,
+                date,
+                time,
+                duration,
+                "Pending"
+            )
+        )
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("planner"))
+
+    return render_template("add-study.html")
+
+@app.route("/edit-study/<int:study_id>", methods=["GET", "POST"])
+def edit_study(study_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    study = connection.execute(
+        """
+        SELECT * FROM study_sessions
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    ).fetchone()
+
+    if study is None:
+        connection.close()
+        return "Study session not found."
+
+    if request.method == "POST":
+
+        subject = request.form["subject"]
+        topic = request.form["topic"]
+        date = request.form["date"]
+        time = request.form["time"]
+        duration = request.form["duration"]
+
+        connection.execute(
+            """
+            UPDATE study_sessions
+            SET subject = ?, topic = ?, date = ?, time = ?, duration = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (
+                subject,
+                topic,
+                date,
+                time,
+                duration,
+                study_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("planner"))
+
+    connection.close()
+
+    return render_template(
+        "edit-study.html",
+        study=study
+    )
+
+@app.route("/delete-study/<int:study_id>", methods=["POST"])
+def delete_study(study_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        DELETE FROM study_sessions
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("planner"))
+
+@app.route("/complete-study/<int:study_id>", methods=["POST"])
+def complete_study(study_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        UPDATE study_sessions
+        SET status = 'Completed'
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("planner"))
+@app.route("/goals", methods=["GET", "POST"])
+def goals():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    if request.method == "POST":
+
+        title = request.form["title"].strip()
+        description = request.form["description"].strip()
+        target_hours = request.form["target_hours"]
+
+        if not title or not description or not target_hours:
+            goals = connection.execute(
+                """
+                SELECT * FROM study_goals
+                WHERE user_id = ?
+                ORDER BY id DESC
+                """,
+                (session["user_id"],)
+            ).fetchall()
+
+            connection.close()
+
+            return render_template(
+                "goals.html",
+                goals=goals,
+                error="All goal fields are required."
+            )
+
+        try:
+            target_hours = int(target_hours)
+
+            if target_hours <= 0:
+                connection.close()
+                return "Target study hours must be greater than 0."
+
+            connection.execute(
+                """
+                INSERT INTO study_goals
+                (user_id, title, description, target_hours, progress)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    session["user_id"],
+                    title,
+                    description,
+                    target_hours,
+                    0
+                )
+            )
+
+            connection.commit()
+
+        except ValueError:
+            connection.close()
+            return "Target study hours must be a valid number."
+
+    goals = connection.execute(
+        """
+        SELECT * FROM study_goals
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "goals.html",
+        goals=goals
+    )
+
+@app.route("/edit-goal/<int:goal_id>", methods=["GET", "POST"])
+def edit_goal(goal_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    goal = connection.execute(
+        """
+        SELECT * FROM study_goals
+        WHERE id = ? AND user_id = ?
+        """,
+        (goal_id, session["user_id"])
+    ).fetchone()
+
+    if goal is None:
+        connection.close()
+        return "Study goal not found."
+
+    if request.method == "POST":
+
+        title = request.form["title"].strip()
+        description = request.form["description"].strip()
+        target_hours = request.form["target_hours"]
+
+        if not title or not description or not target_hours:
+            connection.close()
+            return "All goal fields are required."
+
+        try:
+            target_hours = int(target_hours)
+
+            if target_hours <= 0:
+                connection.close()
+                return "Target study hours must be greater than 0."
+
+            connection.execute(
+                """
+                UPDATE study_goals
+                SET title = ?, description = ?, target_hours = ?
+                WHERE id = ? AND user_id = ?
+                """,
+                (
+                    title,
+                    description,
+                    target_hours,
+                    goal_id,
+                    session["user_id"]
+                )
+            )
+
+            connection.commit()
+            connection.close()
+
+            return redirect(url_for("goals"))
+
+        except ValueError:
+            connection.close()
+            return "Target study hours must be a valid number."
+
+    connection.close()
+
+    return render_template(
+        "edit-goal.html",
+        goal=goal
+    )
+
+@app.route("/update-goal-progress/<int:goal_id>", methods=["GET", "POST"])
+def update_goal_progress(goal_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "GET":
+        return render_template(
+            "update-progress.html",
+            goal_id=goal_id
+        )
+
+    progress = request.form["progress"]
+
+    try:
+        progress = int(progress)
+
+        if progress < 0 or progress > 100:
+            return "Progress must be between 0 and 100."
+
+    except ValueError:
+        return "Progress must be a valid number."
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        UPDATE study_goals
+        SET progress = ?
+        WHERE id = ? AND user_id = ?
+        """,
+        (
+            progress,
+            goal_id,
+            session["user_id"]
+        )
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("goals"))
+    return redirect(url_for("goals"))
+@app.route("/delete-goal/<int:goal_id>", methods=["POST"])
+def delete_goal(goal_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        DELETE FROM study_goals
+        WHERE id = ? AND user_id = ?
+        """,
+        (goal_id, session["user_id"])
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("goals"))
+
 @app.route("/profile")
 def profile():
 
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    user = connection.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (session["user_id"],)
+    ).fetchone()
+
+    connection.close()
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    return render_template("profile.html", user=user)
+
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    study = connection.execute(
+        """
+        SELECT * FROM study_sessions
+        WHERE id = ? AND user_id = ?
+        """,
+        (study_id, session["user_id"])
+    ).fetchone()
+
+    if study is None:
+        connection.close()
+        return "Study session not found."
+
+    if request.method == "POST":
+
+        subject = request.form["subject"]
+        topic = request.form["topic"]
+        date = request.form["date"]
+        time = request.form["time"]
+        duration = request.form["duration"]
+
+        connection.execute(
+            """
+            UPDATE study_sessions
+            SET subject = ?, topic = ?, date = ?, time = ?, duration = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (
+                subject,
+                topic,
+                date,
+                time,
+                duration,
+                study_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("planner"))
+
+    connection.close()
+
+    return render_template(
+        "edit-study.html",
+        study=study
+    )
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -1228,4 +1730,4 @@ def logout():
 
 if __name__ == "__main__":
     create_database()
-    app.run(debug=True)
+    app.run(debug=True, host="127.0.0.1", port=5000)

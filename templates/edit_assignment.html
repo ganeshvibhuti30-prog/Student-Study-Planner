@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Assignment</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/assignments.css') }}">
+</head>
+
+<body>
+
+    <div class="assignments-container">
+
+        <div class="assignments-card">
+
+            <div class="page-header">
+
+                <h1>Edit Assignment</h1>
+
+                <p>
+                    Update your assignment details
+                </p>
+
+            </div>
+
+            <form
+                action="{{ url_for('edit_assignment', assignment_id=assignment['id']) }}"
+                method="POST"
+            >
+
+                <label for="subject_id">
+                    Subject
+                </label>
+
+                <select
+                    id="subject_id"
+                    name="subject_id"
+                    required
+                >
+
+                    {% for subject in subjects %}
+
+                        <option
+                            value="{{ subject['id'] }}"
+                            {% if subject['id'] == assignment['subject_id'] %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ subject['subject_code'] }} -
+                            {{ subject['subject_name'] }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    required
+                >{{ assignment['description'] }}</textarea>
+
+
+                <label for="deadline">
+                    Deadline
+                </label>
+
+                <input
+                    type="date"
+                    id="deadline"
+                    name="deadline"
+                    value="{{ assignment['deadline'] }}"
+                    required
+                >
+
+
+                <label for="priority">
+                    Priority
+                </label>
+
+                <select
+                    id="priority"
+                    name="priority"
+                    required
+                >
+
+                    <option value="High"
+                        {% if assignment['priority'] == 'High' %}selected{% endif %}>
+                        High
+                    </option>
+
+                    <option value="Medium"
+                        {% if assignment['priority'] == 'Medium' %}selected{% endif %}>
+                        Medium
+                    </option>
+
+                    <option value="Low"
+                        {% if assignment['priority'] == 'Low' %}selected{% endif %}>
+                        Low
+                    </option>
+
+                </select>
+
+
+                <label for="status">
+                    Status
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    required
+                >
+
+                    <option value="Pending"
+                        {% if assignment['status'] == 'Pending' %}selected{% endif %}>
+                        Pending
+                    </option>
+
+                    <option value="In Progress"
+                        {% if assignment['status'] == 'In Progress' %}selected{% endif %}>
+                        In Progress
+                    </option>
+
+                    <option value="Completed"
+                        {% if assignment['status'] == 'Completed' %}selected{% endif %}>
+                        Completed
+                    </option>
+
+                </select>
+
+
+                <button type="submit">
+                    Save Changes
+                </button>
+
+            </form>
+
+
+            <div class="navigation">
+
+                <a href="{{ url_for('assignments') }}">
+                    Back to Assignments
+                </a>
+
+                <a href="{{ url_for('dashboard') }}">
+                    Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
