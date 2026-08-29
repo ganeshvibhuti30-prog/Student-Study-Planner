@@ -639,6 +639,27 @@ def update_goal_progress(goal_id):
 
     return redirect(url_for("goals"))
     return redirect(url_for("goals"))
+@app.route("/delete-goal/<int:goal_id>", methods=["POST"])
+def delete_goal(goal_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        DELETE FROM study_goals
+        WHERE id = ? AND user_id = ?
+        """,
+        (goal_id, session["user_id"])
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("goals"))
+
 @app.route("/profile")
 def profile():
 

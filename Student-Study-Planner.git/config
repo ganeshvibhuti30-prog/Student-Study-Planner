@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/nikitanewton99-hue/Student-Study-Planner.git
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
