@@ -11,6 +11,10 @@ body {
     padding: 40px 20px;
 }
 
+/* ==============================
+   TOP NAVIGATION
+   ============================== */
+
 .top-navigation {
     display: flex;
     justify-content: flex-end;
@@ -30,6 +34,11 @@ body {
     text-decoration: underline;
 }
 
+
+/* ==============================
+   DASHBOARD
+   ============================== */
+
 .dashboard-container {
     max-width: 800px;
     margin: auto;
@@ -41,6 +50,11 @@ body {
     border-radius: 12px;
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
 }
+
+
+/* ==============================
+   HEADER
+   ============================== */
 
 .dashboard-header {
     text-align: center;
@@ -55,6 +69,11 @@ body {
     color: #666;
 }
 
+
+/* ==============================
+   SUCCESS MESSAGE
+   ============================== */
+
 .success-message {
     color: #2e7d32;
     background: #e8f5e9;
@@ -64,6 +83,11 @@ body {
     margin-bottom: 20px;
     text-align: center;
 }
+
+
+/* ==============================
+   STUDENT INFORMATION
+   ============================== */
 
 .student-info {
     display: grid;
@@ -82,10 +106,17 @@ body {
     margin-bottom: 5px;
 }
 
+
+/* ==============================
+   DASHBOARD NAVIGATION
+   ============================== */
+
 .navigation {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
 }
 
 .navigation a {
@@ -93,15 +124,58 @@ body {
 }
 
 .navigation button {
-    padding: 11px 20px;
+    width: auto;
+    min-width: 140px;
+    padding: 12px 18px;
     border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    border-radius: 8px;
     background: #222;
     color: white;
     font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .navigation button:hover {
-    opacity: 0.85;
+    background: #444;
+}
+
+
+/* ==============================
+   MOBILE
+   ============================== */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 20px 10px;
+    }
+
+    .dashboard-card {
+        padding: 25px 20px;
+    }
+
+    .navigation {
+        flex-wrap: wrap;
+    }
+
+    .navigation a {
+        flex: 1 1 calc(50% - 5px);
+    }
+
+    .navigation button {
+        min-height: 50px;
+    }
+}
+
+
+@media (max-width: 400px) {
+
+    .navigation {
+        flex-direction: column;
+    }
+
+    .navigation a {
+        width: 100%;
+    }
 }

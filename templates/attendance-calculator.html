@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Target Attendance Calculator</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/attendance-calculator.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <div class="calculator-container">
+
+        <!-- Header -->
+
+        <div class="calculator-header">
+
+            <h1>Target Attendance Calculator</h1>
+
+            <p>
+                Find out how many consecutive classes you need to attend
+                to reach your target attendance percentage.
+            </p>
+
+        </div>
+
+
+        <!-- Calculator Form -->
+
+        <div class="calculator-card">
+
+            <h2>Calculate Required Classes</h2>
+
+            <form method="POST">
+
+                <div class="form-group">
+
+                    <label for="classes_conducted">
+                        Classes Conducted
+                    </label>
+
+                    <input
+                        type="number"
+                        id="classes_conducted"
+                        name="classes_conducted"
+                        min="1"
+                        placeholder="Enter total classes"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="classes_attended">
+                        Classes Attended
+                    </label>
+
+                    <input
+                        type="number"
+                        id="classes_attended"
+                        name="classes_attended"
+                        min="0"
+                        placeholder="Enter attended classes"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="target_percentage">
+                        Target Attendance (%)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="target_percentage"
+                        name="target_percentage"
+                        min="1"
+                        max="99"
+                        step="0.01"
+                        placeholder="Example: 75"
+                        required
+                    >
+
+                </div>
+
+
+                {% if error %}
+
+                    <div class="error-message">
+                        {{ error }}
+                    </div>
+
+                {% endif %}
+
+
+                <button
+                    type="submit"
+                    class="calculate-button"
+                >
+                    Calculate
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Result -->
+
+        {% if result %}
+
+        <div class="result-card">
+
+            <h2>Attendance Result</h2>
+
+            <div class="result-item">
+
+                <span>Current Attendance</span>
+
+                <strong>
+                    {{ result.current_percentage }}%
+                </strong>
+
+            </div>
+
+
+            <div class="result-item">
+
+                <span>Target Attendance</span>
+
+                <strong>
+                    {{ result.target_percentage }}%
+                </strong>
+
+            </div>
+
+
+            <div class="classes-needed">
+
+                <span>Classes Needed</span>
+
+                <strong>
+                    {{ result.classes_needed }}
+                </strong>
+
+                {% if result.classes_needed == 0 %}
+
+                    <p class="success-message">
+                        🎉 You have already reached your target attendance!
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        Attend the next
+                        <strong>{{ result.classes_needed }}</strong>
+                        classes consecutively to reach your target.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Back Button -->
+
+        <a
+            href="{{ url_for('attendance') }}"
+            class="back-button"
+        >
+            ← Back to Attendance Tracker
+        </a>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,226 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px 15px;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #111;
+}
+
+.calculator-container {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.calculator-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.calculator-header h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+}
+
+.calculator-header p {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   CARDS
+========================= */
+
+.calculator-card,
+.result-card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.calculator-card h2,
+.result-card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 21px;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #333;
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.error-message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background: #ffeaea;
+    color: #c62828;
+    font-size: 14px;
+}
+
+
+/* =========================
+   CALCULATE BUTTON
+========================= */
+
+.calculate-button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.calculate-button:hover {
+    background: #222;
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result-card {
+    border-left: 4px solid #333;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item span {
+    color: #555;
+}
+
+.result-item strong {
+    font-size: 18px;
+}
+
+
+.classes-needed {
+    margin-top: 20px;
+    padding: 18px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.classes-needed > span {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.classes-needed > strong {
+    display: block;
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.classes-needed p {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.success-message {
+    color: #2e7d32 !important;
+    font-weight: bold;
+}
+
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+.back-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.back-button:hover {
+    background: #222;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    .calculator-card,
+    .result-card {
+        padding: 20px;
+    }
+
+    .calculator-header h1 {
+        font-size: 25px;
+    }
+
+}

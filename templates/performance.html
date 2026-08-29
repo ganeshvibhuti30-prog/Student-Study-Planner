@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Performance</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/performance.css') }}">
+
+</head>
+
+<body>
+
+    <div class="performance-container">
+
+        <div class="performance-card">
+
+            <div class="performance-header">
+
+                <h1>Performance Overview</h1>
+
+                <p>
+                    View your attendance and marks performance.
+                </p>
+
+            </div>
+
+
+            <!-- Overall Summary -->
+
+            <h2>Overall Performance</h2>
+
+            <div class="summary">
+
+                <div class="summary-box">
+
+                    <h3>Attendance</h3>
+
+                    {% if overall_attendance is not none %}
+
+                        <p class="summary-value">
+                            {{ overall_attendance }}%
+                        </p>
+
+                    {% else %}
+
+                        <p class="not-available">
+                            Not available
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="summary-box">
+
+                    <h3>Marks</h3>
+
+                    {% if overall_marks is not none %}
+
+                        <p class="summary-value">
+                            {{ overall_marks }}%
+                        </p>
+
+                    {% else %}
+
+                        <p class="not-available">
+                            Not available
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="summary-box">
+
+                    <h3>Overall Performance</h3>
+
+                    {% if overall_performance is not none %}
+
+                        <p class="summary-value">
+                            {{ overall_performance }}%
+                        </p>
+
+                    {% else %}
+
+                        <p class="not-available">
+                            Not available
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Subject Performance -->
+
+            <h2>Your Subjects</h2>
+
+            {% if subjects %}
+
+                <div class="subject-list">
+
+                    {% for subject in subjects %}
+
+                        <div class="subject-card">
+
+                            <h3>
+                                {{ subject["subject_code"] }}
+                                -
+                                {{ subject["subject_name"] }}
+                            </h3>
+
+                            <p class="semester">
+                                Semester {{ subject["semester"] }}
+                            </p>
+
+
+                            <div class="performance-details">
+
+                                <div>
+
+                                    <span>Attendance</span>
+
+                                    {% if subject["attendance_percentage"] is not none %}
+
+                                        <strong>
+                                            {{ subject["attendance_percentage"] }}%
+                                        </strong>
+
+                                    {% else %}
+
+                                        <strong class="muted">
+                                            Not added
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>Marks</span>
+
+                                    {% if subject["marks_percentage"] is not none %}
+
+                                        <strong>
+                                            {{ subject["marks_percentage"] }}%
+                                        </strong>
+
+                                    {% else %}
+
+                                        <strong class="muted">
+                                            Not added
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>Grade</span>
+
+                                    {% if subject["grade"] is not none %}
+
+                                        <strong>
+                                            {{ subject["grade"] }}
+                                        </strong>
+
+                                    {% else %}
+
+                                        <strong class="muted">
+                                            —
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>Performance</span>
+
+                                    {% if subject["performance_percentage"] is not none %}
+
+                                        <strong>
+                                            {{ subject["performance_percentage"] }}%
+                                        </strong>
+
+                                    {% else %}
+
+                                        <strong class="muted">
+                                            Not available
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            {% if subject["performance_percentage"] is not none %}
+
+                                <div class="progress-container">
+
+                                    <div
+                                        class="progress-bar"
+                                        data-percentage="{{ subject['performance_percentage'] }}"
+                                    ></div>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="empty-message">
+                    No subjects available yet.
+                </p>
+
+            {% endif %}
+
+
+            <!-- Navigation -->
+
+            <div class="navigation">
+
+                <a href="{{ url_for('dashboard') }}">
+                    Back to Dashboard
+                </a>
+
+                <a href="{{ url_for('attendance') }}">
+                    Attendance Tracker
+                </a>
+
+                <a href="{{ url_for('marks') }}">
+                    Marks Tracker
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/performance.js') }}"></script>
+
+</body>
+
+</html>
